@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "858443541871",
-    "project_id": "self-116a9",
-    "storage_bucket": "self-116a9.appspot.com"
+    "project_number": "445427857114",
+    "project_id": "college-app-c8a3e",
+    "storage_bucket": "college-app-c8a3e.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:858443541871:android:be4e8b416841b7366bcc9a",
+        "mobilesdk_app_id": "1:445427857114:android:a93dd38f6ef4468b21d7e3",
         "android_client_info": {
           "package_name": "com.example.camerax"
         }
@@ -15,45 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyAFVAPgVQwq7nm8KAamNY4glBVsQiw_vXk"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": []
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:858443541871:android:856b5cbb0d3c58d36bcc9a",
-        "android_client_info": {
-          "package_name": "com.example.entry"
-        }
-      },
-      "oauth_client": [],
-      "api_key": [
-        {
-          "current_key": "AIzaSyAFVAPgVQwq7nm8KAamNY4glBVsQiw_vXk"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": []
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:858443541871:android:b2ce7e4de5435a556bcc9a",
-        "android_client_info": {
-          "package_name": "com.example.self"
-        }
-      },
-      "oauth_client": [],
-      "api_key": [
-        {
-          "current_key": "AIzaSyAFVAPgVQwq7nm8KAamNY4glBVsQiw_vXk"
+          "current_key": "AIzaSyDDs1_JW61ldMvQqur-GGJhjbheeFCHjPs"
         }
       ],
       "services": {

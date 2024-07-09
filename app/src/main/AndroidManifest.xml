@@ -26,23 +26,28 @@
         android:theme="@style/Theme.CameraX"
         tools:targetApi="31">
         <activity
-            android:name=".OkDoneActivity"
-            android:exported="false" >
-
-        </activity>
-
+            android:name=".GateKeeperActivity"
+            android:exported="false" />
         <activity
-            android:name=".MainActivity"
-            android:exported="true"
-            android:screenOrientation="portrait" >
-
+            android:name=".AdminActivity"
+            android:exported="false"
+            android:theme="@style/Theme.CameraX" />
+        <activity
+            android:name=".LoginActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
         </activity>
+        <activity
+            android:name=".OkDoneActivity"
+            android:exported="false"></activity>
+        <activity
+            android:name=".MainActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
 
         <meta-data
             android:name="com.google.mlkit.vision.DEPENDENCIES"
