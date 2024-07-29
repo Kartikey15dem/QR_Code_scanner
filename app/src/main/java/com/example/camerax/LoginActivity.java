@@ -19,6 +19,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -37,7 +38,7 @@ public class LoginActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
 
 
-        emailEditText = findViewById(R.id.userName_edit_text);
+        emailEditText = findViewById(R .id.userName_edit_text);
         passwordEditText = findViewById(R.id.password_edit_text);
         loginButton = findViewById(R.id.button);
 
@@ -68,7 +69,11 @@ public class LoginActivity extends AppCompatActivity {
                             FirebaseUser user = mAuth.getCurrentUser();
 
 
-                            String rollno = user.getEmail().substring(0, 8);
+                            assert user != null;
+                            String rollno = Objects.requireNonNull(user.getEmail()).substring(0, 8);
+
+                            StudentApi student = StudentApi.getInstance();
+                            student.setRollNo(rollno);
 
                             // Check student login format
                             String checkStudent = "^\\d{2}[A-Za-z]{2}\\d{4}$";
