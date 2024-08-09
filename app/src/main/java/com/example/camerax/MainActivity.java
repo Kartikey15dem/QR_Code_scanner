@@ -4,18 +4,13 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.Rect;
-import android.graphics.Typeface;
 import android.location.Location;
 import android.os.Bundle;
 import android.text.method.LinkMovementMethod;
 import android.text.util.Linkify;
 import android.util.Log;
-import android.view.View;
-import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,14 +18,11 @@ import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.camera.core.Camera;
-import androidx.camera.core.CameraControl;
 import androidx.camera.core.CameraSelector;
 import androidx.camera.core.ImageAnalysis;
 import androidx.camera.core.Preview;
-import androidx.camera.core.TorchState;
 import androidx.camera.lifecycle.ProcessCameraProvider;
 import androidx.camera.view.PreviewView;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
@@ -45,8 +37,6 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.material.bottomsheet.BottomSheetBehavior;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.mlkit.vision.barcode.BarcodeScanner;
 import com.google.mlkit.vision.barcode.BarcodeScannerOptions;
 import com.google.mlkit.vision.barcode.BarcodeScanning;
@@ -60,7 +50,6 @@ import java.util.concurrent.ExecutionException;
 
 import LOcation.LocationUtils;
 import LOcation.NotificationUtils;
-import kotlinx.coroutines.flow.Flow;
 
 public class MainActivity extends AppCompatActivity {
     private PreviewView previewView;
@@ -85,17 +74,6 @@ public class MainActivity extends AppCompatActivity {
     private boolean isInRadius = false;
 
     private boolean isActivityStarted = false;
-    private CameraControl cameraControl;
-    private Button buttonFlashlight;
-    private boolean isTorchOn =false;
-
-    private BottomSheetFragment bottomSheetFragment;
-    private Button res;
-    private Boolean hadReason =false;
-    private Preview.SurfaceProvider surfaceProvider;
-    private CustomImageView customImageView;
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,41 +85,12 @@ public class MainActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-        customImageView = findViewById(R.id.myCustomImageView);
-
-        buttonFlashlight = findViewById(R.id.flash_button);
-
-        buttonFlashlight.setOnClickListener(v -> {
-            if (cameraControl != null) {
-                isTorchOn = !isTorchOn;
-                cameraControl.enableTorch(isTorchOn);
-            }
-        });
-        bottomSheetFragment = new BottomSheetFragment();
-
-        //bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
-
-
-
-
-         res = findViewById(R.id.button_reason);
-        res.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                bottomSheetFragment.show(getSupportFragmentManager(), bottomSheetFragment.getTag());
-            }
-        });
-
-
-
-
 
         if (!LocationUtils.isLocationEnabled(this)) {
             NotificationUtils.showLocationOffNotification(this);
         }
 
         previewView = findViewById(R.id.preview_view);
-        surfaceProvider = previewView.getSurfaceProvider();
         //resultTextView = findViewById(R.id.result_text_view);
 
 
@@ -168,24 +117,12 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
-        Button scanit= findViewById(R.id.button_scan);
-        scanit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(hadReason) {
-                    customImageView.setBackgroundColor(Color.TRANSPARENT);
-                    if (allPermissionsGranted()) {
-                        startLocationUpdates();
-                        startCamera();
-                    } else {
-                        ActivityCompat.requestPermissions(MainActivity.this, REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS);
-                    }
-                }else{
-                    Toast.makeText(MainActivity.this, "Please enter the reason", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-
+        if (allPermissionsGranted()) {
+            startLocationUpdates();
+            startCamera();
+        } else {
+            ActivityCompat.requestPermissions(this, REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS);
+        }
     }
 
     private void startCamera() {
@@ -210,9 +147,7 @@ public class MainActivity extends AppCompatActivity {
         try {
             cameraProvider.unbindAll();
             camera = cameraProvider.bindToLifecycle(this, cameraSelector, preview);
-            preview.setSurfaceProvider(surfaceProvider);
-
-            cameraControl = camera.getCameraControl();
+            preview.setSurfaceProvider(previewView.getSurfaceProvider());
 
             maxSupportedZoomRatio = Objects.requireNonNull(camera.getCameraInfo().getZoomState().getValue()).getMaxZoomRatio();
             zoomCallback = zoomRatio -> {
@@ -228,8 +163,8 @@ public class MainActivity extends AppCompatActivity {
                 InputImage image = InputImage.fromMediaImage(Objects.requireNonNull(imageProxy.getImage()), imageProxy.getImageInfo().getRotationDegrees());
 
 
-                Task<List<Barcode>> result = scanBarcodes(image);
-                result.addOnCompleteListener(task -> imageProxy.close());
+                    Task<List<Barcode>> result = scanBarcodes(image);
+                    result.addOnCompleteListener(task -> imageProxy.close());
 
 
             });
@@ -244,24 +179,24 @@ public class MainActivity extends AppCompatActivity {
 
     public Task<List<Barcode>> scanBarcodes(InputImage image){
 
-        BarcodeScannerOptions options = new BarcodeScannerOptions.Builder()
-                .setBarcodeFormats(Barcode.FORMAT_QR_CODE, Barcode.FORMAT_AZTEC)
-                .build();
+            BarcodeScannerOptions options = new BarcodeScannerOptions.Builder()
+                    .setBarcodeFormats(Barcode.FORMAT_QR_CODE, Barcode.FORMAT_AZTEC)
+                    .build();
 
-        BarcodeScanner scanner = BarcodeScanning.getClient();
+            BarcodeScanner scanner = BarcodeScanning.getClient();
 
-        return scanner.process(image)
-                .addOnSuccessListener(barcodes -> {
-                    // Barcode barcode = barcodes.get(0);
-                    for (Barcode barcode : barcodes) {
-                        if (isInRadius && LocationUtils.isLocationEnabled(this)  &&  !isActivityStarted ){
+            return scanner.process(image)
+                    .addOnSuccessListener(barcodes -> {
+                     // Barcode barcode = barcodes.get(0);
+                        for (Barcode barcode : barcodes) {
+                            if (isInRadius && LocationUtils.isLocationEnabled(this)  &&  !isActivityStarted ){
 
-                            isActivityStarted = true;
+                                isActivityStarted = true;
 
-                            Rect bounds = barcode.getBoundingBox();
-                            Point[] corners = barcode.getCornerPoints();
-                            String rawValue = barcode.getRawValue();
-                            int valueType = barcode.getValueType();
+                                Rect bounds = barcode.getBoundingBox();
+                                Point[] corners = barcode.getCornerPoints();
+                                String rawValue = barcode.getRawValue();
+                                int valueType = barcode.getValueType();
 //                                switch (valueType) {
 //                                    case Barcode.TYPE_WIFI:
 //                                        String ssid = Objects.requireNonNull(barcode.getWifi()).getSsid();
@@ -276,44 +211,44 @@ public class MainActivity extends AppCompatActivity {
 ////                                        resultTextView.setMovementMethod(LinkMovementMethod.getInstance());
 //                                        break;
 //                                }
-                            //resultTextView.setText(rawValue);
+                                   //resultTextView.setText(rawValue);
 
-                            String RG = "";
-                            assert rawValue != null;
-                            if (rawValue.length() >= 5) {
-                                RG = rawValue.substring(0, 5);
-                            } else {
-                                RG = rawValue; // Or handle it differently as needed
-                            }
-                            if (Objects.equals(RG, "RGIPT")) {
+                                String RG = "";
+                                assert rawValue != null;
+                                if (rawValue.length() >= 5) {
+                                    RG = rawValue.substring(0, 5);
+                                } else {
+                                    RG = rawValue; // Or handle it differently as needed
+                                }
+                                if (Objects.equals(RG, "RGIPT")) {
                                 String[] separatedStrings = rawValue.split(",");
 
 
 
-                                Log.d("seper","String is "+separatedStrings[1]);
-                                Log.d("seper","Sterring is "+separatedStrings[2]);
+                                    Log.d("seper","String is "+separatedStrings[1]);
+                                    Log.d("seper","Sterring is "+separatedStrings[2]);
 
-                                Intent intent = new Intent(MainActivity.this, OkDoneActivity.class);
-                                intent.putExtra("Gate",separatedStrings[1]);
-                                intent.putExtra("Et",separatedStrings[2]);
+                                    Intent intent = new Intent(MainActivity.this, OkDoneActivity.class);
+                                    intent.putExtra("Gate",separatedStrings[1]);
+                                    intent.putExtra("Et",separatedStrings[2]);
 
-                                startActivity(intent);
+                                    startActivity(intent);
 
-                                finish();
-                                break;
-                            } else {
+                                    finish();
+                                    break;
+                                } else {
 
-                                isActivityStarted = false;
+                                    isActivityStarted = false;
+                                }
+
                             }
-
                         }
-                    }
 
-                })
-                .addOnFailureListener(e -> {
-                    Toast.makeText(MainActivity.this, "Failed to scan barcode", Toast.LENGTH_SHORT).show();
-                    Log.e("ERRRR", "Error: ", e);
-                });
+                    })
+                    .addOnFailureListener(e -> {
+                        Toast.makeText(MainActivity.this, "Failed to scan barcode", Toast.LENGTH_SHORT).show();
+                        Log.e("ERRRR", "Error: ", e);
+                    });
 
     }
 
@@ -373,23 +308,4 @@ public class MainActivity extends AppCompatActivity {
         isActivityStarted = false;
     }
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-        cameraProvider.unbindAll();
-    }
-
-    public void onBottomSheetDismissed() {
-       res.setText("Edit reason");
-       hadReason = true;
-
-    }
-
-    public void EtEmpty() {
-
-        hadReason=false;
-        cameraProvider.unbindAll();
-        customImageView.setBackgroundColor(getResources().getColor(R.color.black));
-
-    }
 }
