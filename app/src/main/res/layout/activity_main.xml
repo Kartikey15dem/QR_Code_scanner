@@ -31,11 +31,10 @@
 
 
 
-
     <com.example.camerax.CustomImageView
-            android:id="@+id/myCustomImageView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+        android:id="@+id/myCustomImageView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
     <Button
         android:id="@+id/flash_button"

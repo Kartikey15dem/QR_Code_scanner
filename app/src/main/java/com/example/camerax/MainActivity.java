@@ -1,5 +1,4 @@
 package com.example.camerax;
-
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -39,7 +38,6 @@ import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
-
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -56,7 +54,6 @@ import com.google.mlkit.vision.barcode.BarcodeScanning;
 import com.google.mlkit.vision.barcode.ZoomSuggestionOptions;
 import com.google.mlkit.vision.barcode.common.Barcode;
 import com.google.mlkit.vision.common.InputImage;
-
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
@@ -76,7 +73,6 @@ public class MainActivity extends AppCompatActivity  {
     private static final int REQUEST_CODE_PERMISSIONS = 10;
     private static final String[] REQUIRED_PERMISSIONS = new String[]{Manifest.permission.CAMERA};
     private TextView resultTextView;
-
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
     private FusedLocationProviderClient fusedLocationClient;
     private LocationCallback locationCallback;
@@ -84,7 +80,7 @@ public class MainActivity extends AppCompatActivity  {
 
     private final double fixedLatitude = 26.2652504; // Example latitude
     private final double fixedLongitude = 81.5055621; // Example longitude
-    private final float radiusInMeters = 1000;
+    private final float radiusInMeters = 100000;
     private boolean isInRadius = false;
 
     private boolean isActivityStarted = false;
@@ -129,12 +125,12 @@ public class MainActivity extends AppCompatActivity  {
             @Override
             public void afterTextChanged(Editable s) {// ... your existing code ...
                 if (reasonEt.getText().toString().trim().isEmpty()) {
-                           EtEmpty();
-                        } else {
-                            hadReason = true;
-                            Reason = reasonEt.getText().toString().trim();
-                        }
-                    }
+                    EtEmpty();
+                } else {
+                    hadReason = true;
+                    Reason = reasonEt.getText().toString().trim();
+                }
+            }
         });
 
         customImageView = findViewById(R.id.myCustomImageView);
@@ -162,11 +158,9 @@ public class MainActivity extends AppCompatActivity  {
 
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-
         locationRequest = LocationRequest.create();
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         locationRequest.setInterval(1000);
-
         locationCallback = new LocationCallback() {
             @Override
             public void onLocationResult(@NonNull LocationResult locationResult) {
@@ -174,9 +168,7 @@ public class MainActivity extends AppCompatActivity  {
                     float distance = calculateDistance(location.getLatitude(), location.getLongitude());
                     boolean wasInRadius = isInRadius;
                     isInRadius = distance <= radiusInMeters;
-
                     Log.d("KUTTA", "Distance: " + distance + ", isInRadius: " + isInRadius);
-
                     if (wasInRadius != isInRadius) {
                         bindCameraUseCases();
                     }
@@ -214,15 +206,12 @@ public class MainActivity extends AppCompatActivity  {
             }
         }, ContextCompat.getMainExecutor(this));
     }
-
     private void bindCameraUseCases() {
         if (cameraProvider == null) {
             return;
         }
-
         preview = new Preview.Builder().build();
         cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA;
-
         try {
             cameraProvider.unbindAll();
             camera = cameraProvider.bindToLifecycle(this, cameraSelector, preview);
@@ -237,7 +226,6 @@ public class MainActivity extends AppCompatActivity  {
                 }
                 return false;
             };
-
             ImageAnalysis imageAnalysis = new ImageAnalysis.Builder().build();
             imageAnalysis.setAnalyzer(ContextCompat.getMainExecutor(this), imageProxy -> {
                 @SuppressLint("UnsafeOptInUsageError")
@@ -249,9 +237,7 @@ public class MainActivity extends AppCompatActivity  {
 
 
             });
-
             cameraProvider.bindToLifecycle(this, cameraSelector, preview, imageAnalysis);
-
             Log.d("BINDdd", "Camera use cases bound. isInRadius: " + isInRadius);
         } catch (Exception e) {
             e.printStackTrace();
@@ -341,7 +327,6 @@ public class MainActivity extends AppCompatActivity  {
         }
         return true;
     }
-
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -355,7 +340,6 @@ public class MainActivity extends AppCompatActivity  {
             }
         }
     }
-
     private void startLocationUpdates() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
                 ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
@@ -366,23 +350,18 @@ public class MainActivity extends AppCompatActivity  {
                     LOCATION_PERMISSION_REQUEST_CODE);
         }
     }
-
     private void stopLocationUpdates() {
         fusedLocationClient.removeLocationUpdates(locationCallback);
     }
-
     private float calculateDistance(double currentLatitude, double currentLongitude) {
         Location fixedLocation = new Location("");
         fixedLocation.setLatitude(fixedLatitude);
         fixedLocation.setLongitude(fixedLongitude);
-
         Location currentLocation = new Location("");
         currentLocation.setLatitude(currentLatitude);
         currentLocation.setLongitude(currentLongitude);
-
         return fixedLocation.distanceTo(currentLocation);
     }
-
     @Override
     protected void onResume() {
         super.onResume();

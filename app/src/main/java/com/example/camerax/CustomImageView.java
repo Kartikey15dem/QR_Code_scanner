@@ -1,5 +1,4 @@
 package com.example.camerax;
-
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -7,11 +6,8 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.RectF;
 import android.util.AttributeSet;
-
 import androidx.appcompat.widget.AppCompatImageView;
-
 public class CustomImageView extends AppCompatImageView {
-
     private final Paint rectanglePaint;
     private final Paint pathpaint;
 
@@ -24,8 +20,7 @@ public class CustomImageView extends AppCompatImageView {
 
 
 
-// Top-left corner
-
+    // Top-left corner
     public CustomImageView(Context context, AttributeSet attrs) {
         super(context, attrs);
 
@@ -34,17 +29,13 @@ public class CustomImageView extends AppCompatImageView {
         rectanglePaint.setStyle(Paint.Style.FILL);
         rectanglePaint.setAlpha(180);
 
-         pathpaint = new Paint();
-         pathpaint.setColor( getResources().getColor(R.color.blue));
-         pathpaint.setStyle(Paint.Style.STROKE);
-         pathpaint.setStrokeWidth(10f);
+        pathpaint = new Paint();
+        pathpaint.setColor( getResources().getColor(R.color.blue));
+        pathpaint.setStyle(Paint.Style.STROKE);
+        pathpaint.setStrokeWidth(10f);
 
-         path = new Path();
-
-
-
+        path = new Path();
     }
-
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
@@ -85,9 +76,6 @@ public class CustomImageView extends AppCompatImageView {
         path.lineTo((float) 0.85*getWidth() + gap - cornerSize, (float) getHeight() /10 + squareSize +gap);
 
         canvas.drawPath(path, pathpaint);
-
-
-
 
     }
 }
