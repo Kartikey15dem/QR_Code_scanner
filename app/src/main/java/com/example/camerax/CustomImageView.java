@@ -15,12 +15,12 @@ public class CustomImageView extends AppCompatImageView {
     private final Paint rectanglePaint;
     private final Paint pathpaint;
 
-    private float squareSize = 0;
-    private final float cornerSize = 140;
-
-    private final float gap = 19f;
+    private final float squareSize = 800f;
+    private final float cornerSize = 120;
+    private float centerX = (float) getWidth() / 2;
+    private float centerY = (float) getHeight() / 2;
+    private final float gap = 16f;
     private Path path;
-    private final float sub = 400f;
 
 
 
@@ -30,12 +30,12 @@ public class CustomImageView extends AppCompatImageView {
         super(context, attrs);
 
         rectanglePaint = new Paint();
-        rectanglePaint.setColor(Color.BLACK);
+        rectanglePaint.setColor(Color.BLACK); // Set your desired fill color
         rectanglePaint.setStyle(Paint.Style.FILL);
-        rectanglePaint.setAlpha(180);
+        rectanglePaint.setAlpha(128);
 
          pathpaint = new Paint();
-         pathpaint.setColor( getResources().getColor(R.color.blue));
+         pathpaint.setColor(Color.GREEN);
          pathpaint.setStyle(Paint.Style.STROKE);
          pathpaint.setStrokeWidth(10f);
 
@@ -48,41 +48,38 @@ public class CustomImageView extends AppCompatImageView {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        if(getWidth()<getHeight()) {
-            squareSize = (float) (0.7*getWidth());
-        }else{squareSize = getHeight() - 300f;}
 
         // Draw filled rectangle (matching ImageView dimensions)
         //upper
-        canvas.drawRect(0f, 0f,getWidth(), (float) getHeight() /10, rectanglePaint);
+        canvas.drawRect(0f, 0f,getWidth(),(getHeight()-squareSize)/2, rectanglePaint);
         //lower
-        canvas.drawRect(0f,(float) getHeight() /10 + squareSize, getWidth(), getHeight(), rectanglePaint);
+        canvas.drawRect(0f,(getHeight()+squareSize)/2, getWidth(), getHeight(), rectanglePaint);
         //left
-        canvas.drawRect(0f,(float) getHeight() /10, (float) (0.15*getWidth()), (float) getHeight() /10 + squareSize, rectanglePaint);
+        canvas.drawRect(0f,(getHeight()-squareSize)/2 , (getWidth()-squareSize)/2, (getHeight()+squareSize)/2, rectanglePaint);
         //right
-        canvas.drawRect((float) (0.85*getWidth()), (float) getHeight() /10, getWidth(), (float) getHeight() /10 + squareSize, rectanglePaint);
+        canvas.drawRect((getWidth()+squareSize)/2, (getHeight()-squareSize)/2, getWidth(), (getHeight()+squareSize)/2, rectanglePaint);
 
 
 
 //Top-left corner
-        path.moveTo((float) 0.15*getWidth() - gap,(float) getHeight() /10 - gap +cornerSize);
-        path.lineTo((float) 0.15*getWidth() - gap ,(float) getHeight() /10 - gap);
-        path.lineTo((float) 0.15*getWidth() - gap + cornerSize,(float) getHeight() /10 - gap );
+        path.moveTo((getWidth()-squareSize)/2-gap+cornerSize,(getHeight()-squareSize)/2-gap);
+        path.lineTo((getWidth()-squareSize)/2-gap, (getHeight()-squareSize)/2-gap);
+        path.lineTo((getWidth()-squareSize)/2-gap, (getHeight()-squareSize)/2-gap+cornerSize);
 
 // Top-right corner
-        path.moveTo((float) 0.85*getWidth() + gap, (float) getHeight() /10 - gap +cornerSize);
-        path.lineTo((float) 0.85*getWidth() + gap, (float) getHeight() /10 - gap);
-        path.lineTo((float) 0.85*getWidth() + gap - cornerSize, (float) getHeight() /10 - gap);
+        path.moveTo((getWidth()+squareSize)/2+gap-cornerSize, (getHeight()-squareSize)/2-gap);
+        path.lineTo((getWidth()+squareSize)/2+gap, (getHeight()-squareSize)/2-gap);
+        path.lineTo((getWidth()+squareSize)/2+gap, (getHeight()-squareSize)/2-gap+cornerSize);
 
 // Bottom-left corner
-        path.moveTo((float) 0.15*getWidth() - gap, (float) getHeight() /10 + gap + squareSize -cornerSize);
-        path.lineTo((float) 0.15*getWidth() - gap, (float) getHeight() /10 + gap +squareSize);
-        path.lineTo((float) 0.15*getWidth() - gap + cornerSize, (float) getHeight() /10 + gap+ squareSize);
+        path.moveTo((getWidth()-squareSize)/2-gap, (getHeight()+squareSize)/2+gap-cornerSize);
+        path.lineTo((getWidth()-squareSize)/2-gap, (getHeight()+squareSize)/2+gap);
+        path.lineTo((getWidth()-squareSize)/2-gap+cornerSize, (getHeight()+squareSize)/2+gap);
 
 // Bottom-right corner
-        path.moveTo((float) 0.85*getWidth() + gap, (float) getHeight() /10 + squareSize + gap - cornerSize);
-        path.lineTo((float) 0.85*getWidth() + gap, (float) getHeight() /10 + squareSize + gap);
-        path.lineTo((float) 0.85*getWidth() + gap - cornerSize, (float) getHeight() /10 + squareSize +gap);
+        path.moveTo((getWidth()+squareSize)/2+gap, (getHeight()+squareSize)/2+gap-cornerSize);
+        path.lineTo((getWidth()+squareSize)/2+gap, (getHeight()+squareSize)/2+gap);
+        path.lineTo((getWidth()+squareSize)/2+gap-cornerSize, (getHeight()+squareSize)/2+gap);
 
         canvas.drawPath(path, pathpaint);
 
